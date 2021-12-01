@@ -1,4 +1,4 @@
-module FileUtil (getFileLines) where
+module FileUtil (getFileLines, extractLinesAsNumbers) where
 
 readLines = fmap lines . readFile
 
@@ -8,3 +8,9 @@ getFileLines fileName =
     -- fileName <- getLine
 
     readLines fileName
+
+extractLinesAsNumbers subPath =
+  do
+    lines <- getFileLines ("app/" ++ subPath)
+
+    return (map read lines)

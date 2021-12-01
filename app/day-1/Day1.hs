@@ -1,12 +1,6 @@
 module Day1 where
 
-import FileUtil (getFileLines)
-
-extractLinesAsNumbers fileName =
-  do
-    lines <- getFileLines ("app/day-1/" ++ fileName)
-
-    return (map read lines)
+import FileUtil (extractLinesAsNumbers)
 
 calculateTotalIncrements linesAsNumbers =
   do
@@ -23,7 +17,7 @@ calculateTotalIncrements linesAsNumbers =
 
 solution1 =
   do
-    linesAsNumbers <- extractLinesAsNumbers "input-1.txt"
+    linesAsNumbers <- extractLinesAsNumbers "day-1/input-1.txt"
 
     result <- calculateTotalIncrements linesAsNumbers
 
@@ -32,7 +26,7 @@ solution1 =
 
 solution2 =
   do
-    linesAsNumbers <- extractLinesAsNumbers "input-2.txt"
+    linesAsNumbers <- extractLinesAsNumbers "day-1/input-2.txt"
 
     let one = linesAsNumbers
     let two = drop 1 linesAsNumbers
