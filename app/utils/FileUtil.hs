@@ -1,13 +1,14 @@
 module FileUtil (getFileLines, extractLinesAsNumbers) where
 
+readLines :: FilePath -> IO [String]
 readLines = fmap lines . readFile
 
-getFileLines fileName =
+getFileLines subPath =
   do
     -- putStrLn "Enter file name (Including full path) to read"
     -- fileName <- getLine
 
-    readLines fileName
+    readLines ("app/" ++ subPath)
 
 extractLinesAsNumbers subPath =
   do
