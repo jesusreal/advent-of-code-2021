@@ -10,13 +10,13 @@
 //   return getAverage(results);
 // };
 
-const getSum = (values) => {
+export const getSum = (values) => {
   return values.reduce((acc, value) => acc + value)
 }
 
-const getAverage = (values) => {
+export const getAverage = (values) => {
   return Math.round(
-    getSum(values) / input.length
+    getSum(values) / values.length
   );
 };
 

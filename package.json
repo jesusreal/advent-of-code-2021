@@ -1,0 +1,22 @@
+{
+  "name": "advent-of-code-2021",
+  "version": "1.0.0",
+  "description": "Exercises from https://adventofcode.com/ for year 2021.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jesusreal/advent-of-code-2021.git"
+  },
+  "keywords": [
+    "advent-of-code"
+  ],
+  "author": "Jesús Real Serrano",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jesusreal/advent-of-code-2021/issues"
+  },
+  "homepage": "https://github.com/jesusreal/advent-of-code-2021#readme",
+  "type": "module"
+}
