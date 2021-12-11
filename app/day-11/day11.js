@@ -27,26 +27,28 @@ const showGrid = (values, gridLength) => {
 };
 
 const flashIfNecessary = (energyLevels, position) => {
-  if (energyLevels[position] < FLASH_LEVEL) return energyLevels;
+  const shouldFlash = energyLevels[position] === FLASH_LEVEL;
 
-  energyLevels[position] = 0;
+  if (!shouldFlash) return energyLevels;
 
   const adjacentPositionsFiltered = getAdjacentPositions(GRID_LENGTH, position);
-
   if (DEBUG) console.log(position, adjacentPositionsFiltered);
 
   adjacentPositionsFiltered.forEach((adjacentPosition) => {
     if (DEBUG) console.log(position, adjacentPosition);
 
-    const alreadyFlashed = energyLevels[adjacentPosition] === 0;
-    if (alreadyFlashed) return;
+    if (energyLevels[adjacentPosition] === 0) return;
+    if (energyLevels[adjacentPosition] === FLASH_LEVEL) return;
 
     energyLevels[adjacentPosition] =
       energyLevels[adjacentPosition] + ENERGY_LEVEL_INCREMENT;
 
     energyLevels = flashIfNecessary(energyLevels, adjacentPosition);
   });
+  
   showGrid(energyLevels, GRID_LENGTH);
+
+  energyLevels[position] = 0;
 
   return energyLevels;
 };
@@ -79,13 +81,18 @@ const getFileLines = () => {
 };
 
 const getNewEnergyLevelsAfterStep = (energyLevels) => {
-  let updatedEnergyLevels = energyLevels.map((level) => level + ENERGY_LEVEL_INCREMENT);
-  
+  let updatedEnergyLevels = energyLevels.map(
+    (level) => level + ENERGY_LEVEL_INCREMENT
+  );
+
   showGrid(updatedEnergyLevels, GRID_LENGTH);
 
-  let energyLevelsAfterFlashes = [...updatedEnergyLevels]
+  let energyLevelsAfterFlashes = [...updatedEnergyLevels];
   updatedEnergyLevels.map((_, index) => {
-    energyLevelsAfterFlashes = flashIfNecessary(energyLevelsAfterFlashes, index);
+    energyLevelsAfterFlashes = flashIfNecessary(
+      energyLevelsAfterFlashes,
+      index
+    );
   });
 
   return energyLevelsAfterFlashes;
@@ -139,4 +146,7 @@ console.log(
   solution1()
 );
 
-console.log("Solution 2. What is the first step during which all octopuses flash?", solution2());
+console.log(
+  "Solution 2. What is the first step during which all octopuses flash?",
+  solution2()
+);
