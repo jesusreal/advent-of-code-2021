@@ -34,21 +34,21 @@ const flashIfNecessary = (energyLevels, position) => {
   const adjacentPositionsFiltered = getAdjacentPositions(GRID_LENGTH, position);
   if (DEBUG) console.log(position, adjacentPositionsFiltered);
 
+  energyLevels[position] = 0;
+
   adjacentPositionsFiltered.forEach((adjacentPosition) => {
     if (DEBUG) console.log(position, adjacentPosition);
 
     if (energyLevels[adjacentPosition] === 0) return;
-    if (energyLevels[adjacentPosition] === FLASH_LEVEL) return;
-
-    energyLevels[adjacentPosition] =
-      energyLevels[adjacentPosition] + ENERGY_LEVEL_INCREMENT;
+    if (energyLevels[adjacentPosition] < FLASH_LEVEL) {
+      energyLevels[adjacentPosition] =
+        energyLevels[adjacentPosition] + ENERGY_LEVEL_INCREMENT;
+    }
 
     energyLevels = flashIfNecessary(energyLevels, adjacentPosition);
   });
-  
-  showGrid(energyLevels, GRID_LENGTH);
 
-  energyLevels[position] = 0;
+  showGrid(energyLevels, GRID_LENGTH);
 
   return energyLevels;
 };
