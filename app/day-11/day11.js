@@ -4,7 +4,14 @@ import * as fs from "fs";
 
 let DEBUG = false;
 
-const showIt = (values, gridLength) => {
+let GRID_LENGTH = 10;
+if (DEBUG) {
+  GRID_LENGTH = 3;
+}
+const FLASH_LEVEL = 10;
+const ENERGY_LEVEL_INCREMENT = 1;
+
+const showGrid = (values, gridLength) => {
   if (!DEBUG) return;
   console.log();
   console.log();
@@ -17,6 +24,31 @@ const showIt = (values, gridLength) => {
     console.log(b);
     console.log();
   });
+};
+
+const flashIfNecessary = (energyLevels, position) => {
+  if (energyLevels[position] < FLASH_LEVEL) return energyLevels;
+
+  energyLevels[position] = 0;
+
+  const adjacentPositionsFiltered = getAdjacentPositions(GRID_LENGTH, position);
+
+  if (DEBUG) console.log(position, adjacentPositionsFiltered);
+
+  adjacentPositionsFiltered.forEach((adjacentPosition) => {
+    if (DEBUG) console.log(position, adjacentPosition);
+
+    const alreadyFlashed = energyLevels[adjacentPosition] === 0;
+    if (alreadyFlashed) return;
+
+    energyLevels[adjacentPosition] =
+      energyLevels[adjacentPosition] + ENERGY_LEVEL_INCREMENT;
+
+    energyLevels = flashIfNecessary(energyLevels, adjacentPosition);
+  });
+  showGrid(energyLevels, GRID_LENGTH);
+
+  return energyLevels;
 };
 
 const getAdjacentPositions = (gridLength, position) => {
@@ -46,68 +78,60 @@ const getFileLines = () => {
     .flatMap((line) => line.split("").map((digit) => parseInt(digit)));
 };
 
+const getNewEnergyLevelsAfterStep = (energyLevels) => {
+  let updatedEnergyLevels = energyLevels.map((level) => level + ENERGY_LEVEL_INCREMENT);
+  
+  showGrid(updatedEnergyLevels, GRID_LENGTH);
+
+  let energyLevelsAfterFlashes = [...updatedEnergyLevels]
+  updatedEnergyLevels.map((_, index) => {
+    energyLevelsAfterFlashes = flashIfNecessary(energyLevelsAfterFlashes, index);
+  });
+
+  return energyLevelsAfterFlashes;
+};
+
+const getTotalFlashedForStep = (energyLevels) => {
+  return energyLevels.filter((level) => level === 0).length;
+};
+
 const solution1 = () => {
   let TOTAL_STEPS = 100;
-  let GRID_LENGTH = 10;
   if (DEBUG) {
     TOTAL_STEPS = 50;
-    GRID_LENGTH = 3;
   }
-  const FLASH_LEVEL = 10;
-  const ENERGY_LEVEL_INCREMENT = 1;
 
   let flashesCount = 0;
   let energyLevels = getFileLines();
 
-  const flashIfNecessary = (energyLevels, position) => {
-    if (energyLevels[position] < FLASH_LEVEL) return energyLevels;
-
-    energyLevels[position] = 0;
-
-    const adjacentPositionsFiltered = getAdjacentPositions(
-      GRID_LENGTH,
-      position
-    );
-
-    if (DEBUG) console.log(position, adjacentPositionsFiltered);
-
-    adjacentPositionsFiltered.forEach((adjacentPosition) => {
-      if (DEBUG) console.log(position, adjacentPosition);
-
-      const alreadyFlashed = energyLevels[adjacentPosition] === 0;
-      if (alreadyFlashed) return;
-
-      energyLevels[adjacentPosition] =
-        energyLevels[adjacentPosition] + ENERGY_LEVEL_INCREMENT;
-
-      energyLevels = flashIfNecessary(energyLevels, adjacentPosition);
-    });
-
-    showIt(energyLevels, GRID_LENGTH);
-
-    return energyLevels;
-  };
-
-  for (let step = 0; step < TOTAL_STEPS; step++) {
+  for (let step = 1; step <= TOTAL_STEPS; step++) {
     if (DEBUG) {
       console.log(`===========    STEP ${step}      ==============`);
     }
 
-    energyLevels = energyLevels.map((level) => level + ENERGY_LEVEL_INCREMENT);
+    energyLevels = getNewEnergyLevelsAfterStep(energyLevels);
 
-    showIt(energyLevels, GRID_LENGTH);
-
-    energyLevels.map((_, index) => {
-      energyLevels = flashIfNecessary(energyLevels, index);
-    });
-
-    const flashesInStep = energyLevels.filter((level) => level === 0).length;
-    flashesCount = flashesCount + flashesInStep;
-
-    showIt(energyLevels, GRID_LENGTH);
+    flashesCount = flashesCount + getTotalFlashedForStep(energyLevels);
   }
 
   return flashesCount;
+};
+
+const solution2 = () => {
+  let energyLevels = getFileLines();
+
+  let currentStep = 0;
+  let allOctopusesHaveFlashed = false;
+  while (!allOctopusesHaveFlashed) {
+    currentStep = currentStep + 1;
+
+    energyLevels = getNewEnergyLevelsAfterStep(energyLevels);
+
+    allOctopusesHaveFlashed =
+      getTotalFlashedForStep(energyLevels) === energyLevels.length;
+  }
+
+  return currentStep;
 };
 
 console.log(
@@ -115,4 +139,4 @@ console.log(
   solution1()
 );
 
-// console.log("Solution 2. ", solution2());
+console.log("Solution 2. What is the first step during which all octopuses flash?", solution2());
