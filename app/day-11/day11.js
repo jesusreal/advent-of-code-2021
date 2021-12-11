@@ -59,9 +59,8 @@ const solution1 = () => {
   let flashesCount = 0;
   let energyLevels = getFileLines();
 
-  const flashAdjacentPositionsIfNecessary = (energyLevels, position) => {
-    const level = energyLevels[position];
-    if (level !== FLASH_LEVEL) return energyLevels;
+  const flashIfNecessary = (energyLevels, position) => {
+    if (energyLevels[position] < FLASH_LEVEL) return energyLevels;
 
     energyLevels[position] = 0;
 
@@ -75,20 +74,13 @@ const solution1 = () => {
     adjacentPositionsFiltered.forEach((adjacentPosition) => {
       if (DEBUG) console.log(position, adjacentPosition);
 
-      if (
-        energyLevels[adjacentPosition] === 0 ||
-        energyLevels[adjacentPosition] === FLASH_LEVEL
-      ) {
-        return;
-      }
+      const alreadyFlashed = energyLevels[adjacentPosition] === 0;
+      if (alreadyFlashed) return;
 
       energyLevels[adjacentPosition] =
         energyLevels[adjacentPosition] + ENERGY_LEVEL_INCREMENT;
 
-      energyLevels = flashAdjacentPositionsIfNecessary(
-        energyLevels,
-        adjacentPosition
-      );
+      energyLevels = flashIfNecessary(energyLevels, adjacentPosition);
     });
 
     showIt(energyLevels, GRID_LENGTH);
@@ -106,10 +98,9 @@ const solution1 = () => {
     showIt(energyLevels, GRID_LENGTH);
 
     energyLevels.map((_, index) => {
-      energyLevels = flashAdjacentPositionsIfNecessary(energyLevels, index);
+      energyLevels = flashIfNecessary(energyLevels, index);
     });
 
-    // const flashesInStep = energyLevels.filter((level) => level >= FLASH_LEVEL).length;
     const flashesInStep = energyLevels.filter((level) => level === 0).length;
     flashesCount = flashesCount + flashesInStep;
 
@@ -124,6 +115,4 @@ console.log(
   solution1()
 );
 
-// console.log("Solution 2. What is the middle score? ", solution2());
-
-// console.log("Solution 2. What is the middle score? ", solution2());
+// console.log("Solution 2. ", solution2());
